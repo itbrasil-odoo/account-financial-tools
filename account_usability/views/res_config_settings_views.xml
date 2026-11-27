@@ -26,7 +26,6 @@
                     <field name="fiscalyear_last_day" class="oe_inline" />
                     <field name="fiscalyear_last_month" />
                 </setting>
-                <setting id="fiscalyear_last_month" />
             </block>
         </field>
     </record>
