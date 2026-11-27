@@ -35,3 +35,14 @@ class TestAccountUsability(TransactionCase):
         self.account_1.tag_ids = [Command.clear()]
         accounts = self.env["account.account"].search([("tag_id", "=", self.tag.id)])
         self.assertFalse(accounts)
+
+    def test_tag_id_follows_the_tag_form(self):
+        self.tag.account_ids = [Command.link(self.account_1.id)]
+        self.assertEqual(self.account_1.tag_id, self.tag)
+        self.tag.account_ids = [Command.unlink(self.account_1.id)]
+        self.assertFalse(self.account_1.tag_id)
+
+    def test_accounting_groups_are_selectable(self):
+        privilege = self.env.ref("account.res_groups_privilege_accounting")
+        for xmlid in ("account.group_account_readonly", "account.group_account_user"):
+            self.assertEqual(self.env.ref(xmlid).privilege_id, privilege)

@@ -7,27 +7,21 @@ from odoo import api, fields, models
 class AccountAccount(models.Model):
     _inherit = "account.account"
 
-    # Plain stored m2o mirror of the core tag_ids m2m (whose inverse is
-    # not searchable), maintained by create/write below, so that accounts
-    # remain searchable and groupable by tag from the account side, like
-    # the account group search this module provided before Odoo 20.0.
+    # Stored m2o with the first tag of the core tag_ids m2m, to group and
+    # search accounts by tag from the account side, like the account group
+    # this module provided before Odoo 20.0. Computed, so it follows tag_ids
+    # however it changes (account form, tag form, code-based tags) and is
+    # filled on install and upgrade. Accounts with several tags only carry
+    # the first one here; search on tag_ids to match any of them.
     tag_id = fields.Many2one(
         comodel_name="account.account.tag",
+        string="Main Tag",
+        compute="_compute_tag_id",
+        store=True,
         index="btree",
     )
 
-    def _sync_tag_id_values(self):
+    @api.depends("tag_ids")
+    def _compute_tag_id(self):
         for account in self:
             account.tag_id = account.tag_ids[:1]
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        accounts = super().create(vals_list)
-        accounts._sync_tag_id_values()
-        return accounts
-
-    def write(self, vals):
-        res = super().write(vals)
-        if "tag_ids" in vals:
-            self._sync_tag_id_values()
-        return res

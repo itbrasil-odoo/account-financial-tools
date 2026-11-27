@@ -20,3 +20,5 @@ hidden things that are hidden and available only on EE version.
 4)  Rename the main menu 'Billing' into 'Accounting' to fit with EE
     naming.
 5) Allow to configure **Fiscalyear Last Day** on accounting configuration page.
+6) Search accounts by tag (all tags) and group them by their first tag
+   (*Main Tag*), replacing the account group search of previous versions.
